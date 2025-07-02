@@ -3,6 +3,7 @@ const { loadAllCommands } = require('./utils/commandLoader.js');
 require('dotenv').config();
 
 const commands = loadAllCommands();
+console.log(commands);
 
 const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 
@@ -11,7 +12,7 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
 		const data = await rest.put(
-			Routes.applicationGuildCommands(process.env.CLIENT_ID),
+			Routes.applicationCommands(process.env.CLIENT_ID),
 			{ body: commands },
 		);
 
