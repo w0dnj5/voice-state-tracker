@@ -20,6 +20,32 @@ class VoiceStateLogsRepository {
             console.log(error);
         }
     }
+
+    async findTotalVoiceTimeTop3(guildId) {
+        try {
+            const rawData = await this.prisma.voiceStateLogs.groupBy({
+                by: ['userId'], _sum: { durationMinutes: true },
+                where: {
+                    guildId: guildId
+                },
+                orderBy: {
+                    _sum: {
+                        durationMinutes: 'desc',
+                    },
+                },
+                take: 3
+            });
+
+            const results = rawData.map(raw => ({
+                userId: raw.userId,
+                totalDuration: raw._sum.durationMinutes,
+            }));
+            return results;
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 
 module.exports = VoiceStateLogsRepository;

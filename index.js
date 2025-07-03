@@ -1,4 +1,4 @@
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { PrismaClient } = require('./generated/prisma');
 const { loadAllCommands } = require('./utils/commandLoader.js');
 const { loadAllEvents } = require('./utils/eventLoader.js');
@@ -14,8 +14,12 @@ const client = new Client({
 const prisma = new PrismaClient();
 
 client.commands = new Collection();
-client.voiceStatesData = new Map();
-client.voiceStateLogsRepository = new VoiceStateLogsRepository(prisma);
+client.maps = {
+    voiceStatesData: new Map()
+}
+client.repositories = {
+    voiceStateLogsRepository: new VoiceStateLogsRepository(prisma)
+}
 
 const loadedCommands = loadAllCommands();
 

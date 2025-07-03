@@ -1,56 +1,70 @@
 const { EmbedBuilder } = require('discord.js');
-const path = require('path');
+const path = require('node:path');
 
-function getEmbedData(dirname, langCode, embedName) {
-    try {
-        const langFilePath = path.join(dirname, 'languages', `${langCode}.json`);
-        const langData = require(langFilePath);
-        return langData[embedName];
-    } catch (error) {
-        const defaultLangFilePath = path.join(dirname, 'languages', 'en.json');
-        const defaultLangData = require(defaultLangFilePath);
-        return defaultLangData[embedName];
-    }
+const EMBED_FOLDER_NAME = 'lang';
+
+function findJsonObject(dirname, lang) {
+    const filePath = path.join(dirname, EMBED_FOLDER_NAME, `${lang}.json`);
+    return require(filePath);
 }
 
-function createEmbedFromData(embedData) {
-    if (!embedData) return null;
-
+function embedFromJson(jsonObject) {
     const embed = new EmbedBuilder();
+    
+    if(jsonObject.title) {
+        embed.setTitle(jsonObject.title);
+    }
 
-    if (embedData.title) embed.setTitle(embedData.title);
-    if (embedData.description) embed.setDescription(embedData.description);
-    if (embedData.color) embed.setColor(embedData.color);
-    if (embedData.url) embed.setURL(embedData.url);
+    if(jsonObject.url) {
+        embed.setURL(jsonObject.url);
+    }
 
-    if (embedData.author_name) {
+    if(jsonObject.color) {
+        embed.setColor(jsonObject.color);
+    }
+
+    if(jsonObject.author) {
+        const author = jsonObject.author;
         embed.setAuthor({
-            name: embedData.author_name,
-            iconURL: embedData.author_icon_url || undefined,
-            url: embedData.author_url || undefined
+            name: author.name,
+            iconURL: author.iconURL,
+            url: author.url
         });
     }
 
-    if (embedData.thumbnail_url) embed.setThumbnail(embedData.thumbnail_url);
-    if (embedData.image_url) embed.setImage(embedData.image_url);
+    if(jsonObject.description) {
+        embed.setDescription(jsonObject.description);
+    }
 
-    if (embedData.footer_text) {
+    if(jsonObject.thumbnail) {
+        embed.setThumbnail(jsonObject.thumbnail);
+    }
+
+    if(jsonObject.image) {
+        embed.setImage(jsonObject.image);
+    }
+
+    if(jsonObject.footer) {
+        const footer = jsonObject.footer;
         embed.setFooter({
-            text: embedData.footer_text,
-            iconURL: embedData.footer_icon_url || undefined
+            text: footer.text,
+            iconURL: footer.iconURL
         });
     }
 
-    if (embedData.timestamp) embed.setTimestamp();
+    if(jsonObject.fields) {
+        embed.setFields(jsonObject.fields);
+    }
 
-    if (embedData.fields && Array.isArray(embedData.fields)) {
-        embed.addFields(...embedData.fields);
+    if(jsonObject.timestamp) {
+        embed.setTimestamp();
     }
 
     return embed;
 }
 
+
 module.exports = {
-    getEmbedData,
-    createEmbedFromData
+    findJsonObject,
+    embedFromJson
 }

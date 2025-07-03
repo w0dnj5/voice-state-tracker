@@ -26,7 +26,7 @@ module.exports = {
     execute(oldState, newState, client) {
         if(isBot(newState)) return;
 
-        const voiceStatesData = client.voiceStatesData;
+        const { voiceStatesData } = client.maps;
         const userId = newState.member.user.id;
         const guildId = newState.guild.id;
 
@@ -48,10 +48,10 @@ module.exports = {
             const data = voiceStatesData.get(key);
             data.disconnectAt = new Date();
             data.durationMinutes = calculateDurationMinutes(data);
-            console.log(data);
 
             if(data.durationMinutes >= 10) {
-                client.voiceStateLogsRepository.createLog(data);
+                const { voiceStateLogsRepository } = client.repositories;
+                voiceStateLogsRepository.createLog(data);
             }
 
             voiceStatesData.delete(key);

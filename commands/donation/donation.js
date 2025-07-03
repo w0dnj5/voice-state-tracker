@@ -1,25 +1,23 @@
-const { SlashCommandBuilder, Locale } = require('discord.js');
-const { createEmbedFromData, getEmbedData } = require('../../utils/embedBuilder.js')
+const { SlashCommandBuilder } = require('discord.js');
+const embedBuilder = require('../../utils/embedBuilder.js');
+
+function createDonationEmbed() {
+
+    const jsonObject = embedBuilder.findJsonObject(__dirname, 'ko');
+    return embedBuilder.embedFromJson(jsonObject);
+}
 
 module.exports = {
-    name: 'donate',
-    description: 'donate for developer',
+    name: '후원',
+    description: '개발자에게 후원하기',
     data: new SlashCommandBuilder()
-        .setName('donate')
-        .setNameLocalizations({
-            [Locale.Korean]: '후원'
-        })
-        .setDescription('donate for developer')
-        .setDescriptionLocalizations({
-            [Locale.Korean]: '개발자에게 후원하기'
-        }),
+        .setName('후원')
+        .setDescription('개발자에게 후원하기'),
     async execute(interaction) {
         
-        const userLocale = interaction.locale;
-        const embedData = getEmbedData(__dirname, userLocale, 'donation_embed')
-        const embed = createEmbedFromData(embedData);
+        const embed = createDonationEmbed();
 
-         await interaction.reply({ 
+        await interaction.reply({ 
             embeds: [embed],
             ephemeral: true
         });
