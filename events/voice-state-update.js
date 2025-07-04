@@ -1,5 +1,7 @@
 const { Events } = require('discord.js');
 
+const MIN_VOICE_DURATION = 0;
+
 function isBot(state) {
     return state.member.user.bot;
 }
@@ -17,8 +19,8 @@ function isAfkChannel(state) {
     return state.channelId && (state.channelId === state.guild.afkChannelId);
 }
 
-function calculateDurationMinutes(data) {
-    return Math.floor((data.disconnectAt - data.connectAt) / 60_000);
+function isVaildDuration(data) {
+    return (data.disconnectedAt - data.connectedAt) / 1000 >= MIN_VOICE_DURATION;
 }
 
 module.exports = {
@@ -35,9 +37,7 @@ module.exports = {
             const data = {
                 userId: userId,
                 guildId: guildId,
-                connectAt: new Date(),
-                disconnectAt: undefined,
-                durationMinutes: undefined
+                connectedAt: new Date(),
             }
 
             voiceStatesData.set(key, data);
@@ -46,12 +46,11 @@ module.exports = {
         if(isDisconnected(oldState, newState)) {
             const key = `${userId}-${guildId}`;
             const data = voiceStatesData.get(key);
-            data.disconnectAt = new Date();
-            data.durationMinutes = calculateDurationMinutes(data);
+            data.disconnectedAt = new Date();
 
-            if(data.durationMinutes >= 10) {
+            if(isVaildDuration(data)) {
                 const { voiceStateLogsRepository } = client.repositories;
-                voiceStateLogsRepository.createLog(data);
+                voiceStateLogsRepository.createVoiceStateLog(data);
             }
 
             voiceStatesData.delete(key);

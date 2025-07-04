@@ -1,8 +1,8 @@
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { PrismaClient } = require('./generated/prisma');
-const { loadAllCommands } = require('./utils/commandLoader.js');
-const { loadAllEvents } = require('./utils/eventLoader.js');
-const VoiceStateLogsRepository = require('./repository/voiceStateLogsRepository.js');
+const { loadAllCommands } = require('./utils/discord-command-loader.js');
+const { loadAllEvents } = require('./utils/discord-event-loader.js');
+const VoiceStateLogsRepository = require('./repository/voice-state-logs-repository.js');
 require('dotenv').config();
 
 const client = new Client({

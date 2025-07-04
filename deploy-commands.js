@@ -1,9 +1,8 @@
 const { REST, Routes } = require('discord.js');
-const { loadAllCommands } = require('./utils/commandLoader.js');
+const { loadAllCommands } = require('./utils/discord-command-loader.js');
 require('dotenv').config();
 
 const commands = loadAllCommands();
-console.log(commands);
 
 const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 
